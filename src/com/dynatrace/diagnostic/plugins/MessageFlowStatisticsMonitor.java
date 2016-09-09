@@ -15,22 +15,22 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 public class MessageFlowStatisticsMonitor implements Monitor {
-
-	public static final String METRIC_MESSAGE_FLOW_GROUP = "Message Flow Group";
-	private static final String PARAM_QMGR_PORT="qMgr.port";
-	private static final String PARAM_QMGR_NAME="qMgr.name";
-	private static final String PARAM_QMGR_SERVER_CHANNEL = "qMgr.channel";
-	private static final String PARAM_STATS_TOPIC="qMgr.topic";
+	//removed static declarations 
+	public final String METRIC_MESSAGE_FLOW_GROUP = "Message Flow Group";
+	private final String PARAM_QMGR_PORT="qMgr.port";
+	private final String PARAM_QMGR_NAME="qMgr.name";
+	private final String PARAM_QMGR_SERVER_CHANNEL = "qMgr.channel";
+	private final String PARAM_STATS_TOPIC="qMgr.topic";
 	private int port;
-	private static String host;
-	private static String user;
-	private static String passwd;
-	private static String queueManagerName;
-	private static String queueManagerChannel;
-	private static String statsTopic;
-	private static final Logger log = Logger.getLogger(MessageFlowStatisticsMonitor.class.getName());
-	private static Thread dcThread;
-	private static Object LOCK = new Object();
+	private String host;
+	private String user;
+	private String passwd;
+	private String queueManagerName;
+	private String queueManagerChannel;
+	private String statsTopic;
+	private final Logger log = Logger.getLogger(MessageFlowStatisticsMonitor.class.getName());
+	private Thread dcThread;
+	private Object LOCK = new Object();
 	
 	/**
 	 * Initializes the Plugin. This method is called in the following cases:
