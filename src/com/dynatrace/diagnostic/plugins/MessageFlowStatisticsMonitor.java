@@ -142,7 +142,6 @@ public class MessageFlowStatisticsMonitor implements Monitor {
 	 */
 	@Override
 	public Status execute(MonitorEnvironment env) throws Exception {		
-		log.info("Attempting to connect to: " + host);
 //		String messageFlowName = env.getHost().getAddress();
 		if ( DataCollectionThread.getExceptionOccurred()) {
 			log.severe("Exception happened in dtc. Re-init.");
