@@ -15,12 +15,13 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 public class MessageFlowStatisticsMonitor implements Monitor {
-	//removed static declarations 
-	public final String METRIC_MESSAGE_FLOW_GROUP = "Message Flow Group";
-	private final String PARAM_QMGR_PORT="qMgr.port";
-	private final String PARAM_QMGR_NAME="qMgr.name";
-	private final String PARAM_QMGR_SERVER_CHANNEL = "qMgr.channel";
-	private final String PARAM_STATS_TOPIC="qMgr.topic";
+	//removed static modifiers
+	//removed final modifiers
+	public String METRIC_MESSAGE_FLOW_GROUP = "Message Flow Group";
+	private String PARAM_QMGR_PORT="qMgr.port";
+	private String PARAM_QMGR_NAME="qMgr.name";
+	private String PARAM_QMGR_SERVER_CHANNEL = "qMgr.channel";
+	private String PARAM_STATS_TOPIC="qMgr.topic";
 	private int port;
 	private String host;
 	private String user;
