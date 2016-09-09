@@ -223,7 +223,7 @@ public class MessageFlowStatisticsMonitor implements Monitor {
 		 }
 	}
 	 
-	 public static void main(String args[]) {
+	 public void main(String args[]) {
 		 DataCollectionThread.setHost(args[0]);
 		 DataCollectionThread.setPort(Integer.parseInt(args[1]));
 		 DataCollectionThread.setQMgrName(args[2]);
