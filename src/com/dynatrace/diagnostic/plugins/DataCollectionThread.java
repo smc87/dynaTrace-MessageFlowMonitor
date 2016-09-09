@@ -155,7 +155,6 @@ public void setup() throws Exception
   public void run()
   {
 //	  log.severe("In run of dct");
-	log.info("Inside Thread: " + host);
     MQException.log = null;
     try {
     	this.openOptions = 1;

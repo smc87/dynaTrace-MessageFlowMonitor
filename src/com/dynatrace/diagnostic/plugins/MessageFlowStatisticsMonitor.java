@@ -92,8 +92,6 @@ public class MessageFlowStatisticsMonitor implements Monitor {
 	}
 
 	private void init() throws Exception {
-		log.info("Before thread Host: " + host);
-		log.info("Before Thread QM: " + queueManagerName);
 		DCThread = new DataCollectionThread();
 		DCThread.setHost(host);
 		DCThread.setPort(port);
