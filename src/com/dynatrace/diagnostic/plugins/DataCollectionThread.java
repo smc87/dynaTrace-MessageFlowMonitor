@@ -41,17 +41,17 @@ public class DataCollectionThread
 {
   public static Object MODEL_LOCK = new Object();
   private static DataCollectionThread singleton;
-  private static String host;
-  private static int port;
-  private static String serverChannel;
-  private static String statsTopic;
-  private static String qMgrName;
-  private static String userId;
-  private static String passwd;
+  private String host;
+  private int port;
+  private String serverChannel;
+  private String statsTopic;
+  private String qMgrName;
+  private String userId;
+  private String passwd;
   private static final Logger log = Logger.getLogger(MessageFlowStatisticsMonitor.class.getName());
-  private static boolean exceptionOccurred=false;
+  private boolean exceptionOccurred=false;
 
-  private static HashMap<String, HashMap<String, Long>> messageFlowMap = new HashMap<String, HashMap<String, Long>>();
+  private HashMap<String, HashMap<String, Long>> messageFlowMap = new HashMap<String, HashMap<String, Long>>();
 
   DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
   DocumentBuilder builder;
@@ -75,24 +75,24 @@ public class DataCollectionThread
     }
   }
 
-  public static void setHost(String host) {
-	  DataCollectionThread.host = host;
+  public void setHost(String host) {
+	  this.host = host;
   }
   
-  public static void setPort(int port) {
-	  DataCollectionThread.port = port;
+  public void setPort(int port) {
+	  this.port = port;
   }
   
-  public static void setServerChannel(String serverChannel) {
-	  DataCollectionThread.serverChannel = serverChannel;
+  public void setServerChannel(String serverChannel) {
+	  this.serverChannel = serverChannel;
   }
   
-  public static void setStatsTopic(String statsTopic) {
-	  DataCollectionThread.statsTopic = statsTopic;
+  public void setStatsTopic(String statsTopic) {
+	  this.statsTopic = statsTopic;
   }
   
-  public static void setQMgrName(String qMgrName) {
-	  DataCollectionThread.qMgrName = qMgrName;
+  public void setQMgrName(String qMgrName) {
+	  this.qMgrName = qMgrName;
   }
   
   public static synchronized DataCollectionThread getInstance() {
@@ -102,7 +102,7 @@ public class DataCollectionThread
     return singleton;
   }
 
-  public static boolean getExceptionOccurred() {
+  public boolean getExceptionOccurred() {
 	  return exceptionOccurred;
   }
   
@@ -114,12 +114,12 @@ public class DataCollectionThread
 	  return this.KEEP_GATHERING;
   }
   
-  public static void setUserId(String userId) {
-	  DataCollectionThread.userId = userId;
+  public void setUserId(String userId) {
+	  this.userId = userId;
   }
   
-  public static void setPasswd(String pass) {
-	  DataCollectionThread.passwd = pass;
+  public void setPasswd(String pass) {
+	  this.passwd = pass;
   }
 
   @SuppressWarnings("unchecked")
@@ -155,7 +155,7 @@ public void setup() throws Exception
   public void run()
   {
 //	  log.severe("In run of dct");
-	  
+	log.info("Inside Thread: " + host);
     MQException.log = null;
     try {
     	this.openOptions = 1;
@@ -318,33 +318,33 @@ public void setup() throws Exception
 	  }
   }
 */
-  private static void populate(String messageFlowName, HashMap<String, Long> statistics) {
+  private void populate(String messageFlowName, HashMap<String, Long> statistics) {
 	  synchronized(MODEL_LOCK) {
 	  //log.severe("Putting info about " + messageFlowName + " into hashmap");
-		  messageFlowMap.put(messageFlowName, statistics);
+		  this.messageFlowMap.put(messageFlowName, statistics);
 	  //log.severe("Size of HashMap in dtc=" + messageFlowMap.size());
 	  }
   }
   
-  public static HashMap<String, HashMap<String, Long>> getMessageFlowMap() {
+  public HashMap<String, HashMap<String, Long>> getMessageFlowMap() {
 	  synchronized(MODEL_LOCK) {
 		  HashMap<String, HashMap<String, Long>> tempMap = messageFlowMap;
-		  messageFlowMap = new HashMap<String, HashMap<String, Long>>();
+		  this.messageFlowMap = new HashMap<String, HashMap<String, Long>>();
 		  return tempMap;
 	  }
 	  //log.severe("Size of HashMap before Return in dtc=" + messageFlowMap.size());
   }
   
-  public synchronized static void populateDT(MonitorEnvironment env) {
+  public synchronized void populateDT(MonitorEnvironment env) {
 	  FlowStatElements[] flowStatElements = FlowStatElements.values();
 	  for (int p = 0; p < flowStatElements.length; p++) {
 		  FlowStatElements flowStatElement = flowStatElements[p];
 		  String metricKey = flowStatElement.getKey();
-		  Set<String> keySet = messageFlowMap.keySet();
+		  Set<String> keySet = this.messageFlowMap.keySet();
 		  for (String messageFlowName: keySet) {
 			  //log.info("Metric=" + metricKey + " flowName=" + messageFlowName);
 			  Collection<MonitorMeasure> monitorMeasures = env.getMonitorMeasures("Message Flow Group", metricKey);
-			  HashMap<String, Long> statistics = messageFlowMap.get(messageFlowName);
+			  HashMap<String, Long> statistics = this.messageFlowMap.get(messageFlowName);
 			  for (MonitorMeasure subscribedMonitorMeasure : monitorMeasures) {
 				  MonitorMeasure dynamicMeasure = env.createDynamicMeasure(subscribedMonitorMeasure, "Message Flow Name", messageFlowName);
 				  //log.info("Value=" + statistics.get(metricKey));

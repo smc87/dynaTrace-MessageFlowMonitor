@@ -32,6 +32,7 @@ public class MessageFlowStatisticsMonitor implements Monitor {
 	private final Logger log = Logger.getLogger(MessageFlowStatisticsMonitor.class.getName());
 	private Thread dcThread;
 	private Object LOCK = new Object();
+	public DataCollectionThread DCThread;
 	
 	/**
 	 * Initializes the Plugin. This method is called in the following cases:
@@ -91,24 +92,27 @@ public class MessageFlowStatisticsMonitor implements Monitor {
 	}
 
 	private void init() throws Exception {
-		DataCollectionThread.setHost(host);
-		DataCollectionThread.setPort(port);
-		DataCollectionThread.setQMgrName(queueManagerName);
-		DataCollectionThread.setServerChannel(queueManagerChannel);
-		DataCollectionThread.setStatsTopic(statsTopic);
+		log.info("Before thread Host: " + host);
+		log.info("Before Thread QM: " + queueManagerName);
+		DCThread = new DataCollectionThread();
+		DCThread.setHost(host);
+		DCThread.setPort(port);
+		DCThread.setQMgrName(queueManagerName);
+		DCThread.setServerChannel(queueManagerChannel);
+		DCThread.setStatsTopic(statsTopic);
 
 		if ( user != null) {
-			DataCollectionThread.setUserId(user);
+			DCThread.setUserId(user);
 		}
 
 		if (passwd != null) {
-			DataCollectionThread.setPasswd(passwd);
+			DCThread.setPasswd(passwd);
 		}
-		DataCollectionThread.getInstance().setGathering(true);
+		DCThread.setGathering(true);
 
 		try {
-			DataCollectionThread.getInstance().setup();
-			dcThread = new Thread(DataCollectionThread.getInstance());
+			DCThread.setup();
+			dcThread = new Thread(DCThread);
 			dcThread.start();
 		}
 		catch (Exception e) {
@@ -143,7 +147,7 @@ public class MessageFlowStatisticsMonitor implements Monitor {
 	@Override
 	public Status execute(MonitorEnvironment env) throws Exception {		
 //		String messageFlowName = env.getHost().getAddress();
-		if ( DataCollectionThread.getExceptionOccurred()) {
+		if ( DCThread.getExceptionOccurred()) {
 			log.severe("Exception happened in dtc. Re-init.");
 			init();
 		}
@@ -155,7 +159,7 @@ public class MessageFlowStatisticsMonitor implements Monitor {
 
 	  public void populateDT(MonitorEnvironment env) {
 		  FlowStatElements[] flowStatElements = FlowStatElements.values();
-		  HashMap<String, HashMap<String, Long>> messageFlowMap = DataCollectionThread.getMessageFlowMap();
+		  HashMap<String, HashMap<String, Long>> messageFlowMap = DCThread.getMessageFlowMap();
 		  //log.severe("Map size=" + messageFlowMap.size());
 		  for (int p = 0; p < flowStatElements.length; p++) {
 			  FlowStatElements flowStatElement = flowStatElements[p];
@@ -214,29 +218,30 @@ public class MessageFlowStatisticsMonitor implements Monitor {
 	 */	@Override
 	public void teardown(MonitorEnvironment env) throws Exception {
 		 synchronized(LOCK) {
-			 if ( DataCollectionThread.getInstance().getGathering()) {
-				 DataCollectionThread.getInstance().setGathering(false);
+			 if ( DCThread.getGathering()) {
+				 DCThread.setGathering(false);
 				 Thread.sleep(1000);
-				 DataCollectionThread.getInstance().shutdown();
+				 DCThread.shutdown();
 			 }
 		 }
 	}
 	 
 	 public void main(String args[]) {
-		 DataCollectionThread.setHost(args[0]);
-		 DataCollectionThread.setPort(Integer.parseInt(args[1]));
-		 DataCollectionThread.setQMgrName(args[2]);
-		 DataCollectionThread.setServerChannel(args[3]);
-		 DataCollectionThread.setStatsTopic(args[4]);
+		//DataCollectionThread DCThread = new DataCollectionThread();
+		 DCThread.setHost(args[0]);
+		 DCThread.setPort(Integer.parseInt(args[1]));
+		 DCThread.setQMgrName(args[2]);
+		 DCThread.setServerChannel(args[3]);
+		 DCThread.setStatsTopic(args[4]);
 
 		if ( args.length > 5 ) {
-			DataCollectionThread.setUserId(args[5]);
+			DCThread.setUserId(args[5]);
 		}
-        DataCollectionThread.getInstance().setGathering(true);
+		DCThread.setGathering(true);
 
         try {
-            DataCollectionThread.getInstance().setup();
-        	Thread dct = new Thread(DataCollectionThread.getInstance());
+        	DCThread.setup();
+        	Thread dct = new Thread(DCThread);
         	dct.start();
         }
         catch (Exception e) {
