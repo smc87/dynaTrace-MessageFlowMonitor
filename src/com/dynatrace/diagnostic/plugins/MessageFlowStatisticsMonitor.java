@@ -147,10 +147,17 @@ public class MessageFlowStatisticsMonitor implements Monitor {
 	 */
 	@Override
 	public Status execute(MonitorEnvironment env) throws Exception {
-//		String messageFlowName = env.getHost().getAddress();
+		String messageFlowName = env.getHost().getAddress();
 		if ( DCThread.getExceptionOccurred()) {
+			log.severe(messageFlowName);
 			log.severe("Exception happened in dtc. Re-init.");
-			init();
+			try {
+				init();
+			}
+			catch (Exception e) {
+				log.severe(e.getMessage());
+				return new Status(Status.StatusCode.ErrorInfrastructureUnreachable, e.getMessage());
+			}
 		}
 //		HashMap<String, Long> statistics = DataCollectionThread.getMessageFlowData(messageFlowName);
 
